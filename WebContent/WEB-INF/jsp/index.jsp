@@ -3,21 +3,20 @@
 <html>
 
 <head>
-	<meta name="generator" content="HTML Tidy for HTML5 for Windows version 5.2.0" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="description" content="show blog charts page" />
-	<meta name="author" content="ccran" />
-	<link rel="icon" href="${pageContext.request.contextPath}/image/logo.ico" type="img/x-ico" />
-	<title>Blog</title>
-	<!-- Bootstrap core CSS -->
-	<link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" />
-	<!-- Custom styles for this template -->
-	<link href="${pageContext.request.contextPath}/css/cover.css" rel="stylesheet" />
+<meta name="generator" content="HTML Tidy for HTML5 for Windows version 5.2.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="description" content="show blog charts page" />
+<meta name="author" content="ccran" />
+<link rel="icon" href="${pageContext.request.contextPath}/image/logo.ico" type="img/x-ico" />
+<title>Blog</title>
+<!-- Bootstrap core CSS -->
+<link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" />
+<!-- Custom styles for this template -->
+<link href="${pageContext.request.contextPath}/css/cover.css" rel="stylesheet" />
 </head>
-
 <body>
 	<div class="site-wrapper">
 		<div class="site-wrapper-inner">
@@ -44,6 +43,7 @@
 					</div>
 				</div>
 				</nav>
+
 				<!--中间文字-->
 				<div class="inner cover">
 					<h1 class="cover-heading">博客数据图表可视化</h1>
