@@ -3,6 +3,7 @@
 import java.util.List;
 
 import com.ccran.pojo.CnblogAuthor;
+import com.ccran.pojo.CnblogBlog;
 
 /**
  * 
@@ -16,4 +17,6 @@ public interface CnblogMapper {
 	public List<CnblogAuthor> listTopReadAuthor(int limit);
 	//查询年份min-max年份之间的数量
 	public int listYearAuthorCreatedNum(String min,String max);
+	//根据id获取CnblogBlog列表
+	public List<CnblogBlog> listAllBlogByAuthorId(int id);
 }

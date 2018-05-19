@@ -22,4 +22,11 @@ public interface CnblogService {
 	 * @return
 	 */
 	public JSONObject getYearCreatedAuthorNum();
+	
+	/**
+	 * 通过id获取作者博客主题信息
+	 * @param id
+	 * @return
+	 */
+	public JSONObject getAuthorBlogTagById(int id);
 }

@@ -30,4 +30,10 @@ public class CnblogController {
 	public @ResponseBody JSONObject getYearCreatedAuthorNum(){
 		return cnblogAuthorService.getYearCreatedAuthorNum();
 	}
+	
+	//获取作者id的博文主题
+	@RequestMapping("/getAuthorBlogTag")
+	public @ResponseBody JSONObject getAuthorBlogTag(int id){
+		return cnblogAuthorService.getAuthorBlogTagById(id);
+	}
 }

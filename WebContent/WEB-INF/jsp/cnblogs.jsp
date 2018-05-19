@@ -57,24 +57,26 @@
 		</div>
 		<hr class="featurette-divider" />
 		<div class="row featurette">
-			<div class="col-md-5">
+			<div class="col-md-7">
 				<!-- Echarts通过DOM生成 -->
 				<div id="top-fans-author" style="width: 600px; height: 400px;"></div>
 			</div>
-			<div class="col-md-5">
-				<h1>兰丁格尔图了解一下</h1>
+			<div class="col-md-4">
+				<div id="read-top-author" style="width: 600px; height: 400px;"></div>
+			</div>
+			<div class="col-md-7">
+				<h2 class="featurette-heading">
+					博主发表博文的词云展示，通过ansj分词实现
+				</h2>
+				<p class="lead">
+					通过点击上述柱状图中的横坐标可以完成词云wordcloud展示
+				</p>
+			</div>
+			<div class="col-md-4">
+				<div id="top-fans-author-blog-tag" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 		<hr class="featurette-divider" />
-		<div class="row featurette">
-			<div class="col-md-5">
-				<!-- Echarts通过DOM生成 -->
-				<div id="read-top-author" style="width: 600px; height: 400px;"></div>
-			</div>
-			<div class="col-md-5">
-				<h1>兰丁格尔图了解一下</h1>
-			</div>
-		</div>
 	</div>
 	<!-- Bootstrap core JavaScript
     ================================================== -->
@@ -82,6 +84,7 @@
 	<script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/echarts.js"></script>
+	<script src="${pageContext.request.contextPath}/js/echarts-wordcloud.js"></script>
 	<script src="${pageContext.request.contextPath}/js/cnblogs.js"></script>
 </body>
 </html>
