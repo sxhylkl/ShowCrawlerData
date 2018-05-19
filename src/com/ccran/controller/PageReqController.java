@@ -1,20 +1,30 @@
-package com.ccran.controller;
+ï»¿package com.ccran.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ccran.service.ShowAuthroBlogSumService;
+
 /**
  * 
  * @author chenran
- * ½øÐÐÂ·¾¶ÇëÇóµÄÌø×ª
+ * è¿›è¡Œè·¯å¾„è¯·æ±‚çš„è·³è½¬
  */
 @Controller
 public class PageReqController {
+	@Autowired
+	ShowAuthroBlogSumService service;
+	
 	@RequestMapping("/")
 	public ModelAndView index(){
 		ModelAndView mav=new ModelAndView();
 		mav.setViewName("index");
+		int authorSum=service.getAuthorSum();
+		int blogSum=service.getBlogSum();
+		mav.addObject("authorSum",authorSum);
+		mav.addObject("blogSum",blogSum);
 		return mav;
 	}
 	

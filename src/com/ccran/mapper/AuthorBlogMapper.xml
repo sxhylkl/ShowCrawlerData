@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 接口映射 -->
+<mapper namespace="com.ccran.mapper.AuthorBlogMapper">
+	<select id="getAuthorSum" resultType="_int">
+		select sum(cnt) from(select count(*) as cnt from csdn_author union all select count(*) as cnt from cnblog_author) as tmp;
+	</select>
+	<select id="getBlogSum" resultType="_int">
+		select sum(cnt) from(select count(*) as cnt from csdn_blog union all select count(*) as cnt from cnblog_blog) as tmp;
+	</select>
+</mapper>

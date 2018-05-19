@@ -32,7 +32,7 @@
 	  </property>
 	</bean>
 	
-	
+	<!-- 配置mapper路径 -->
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="typeAliasesPackage" value="com.ccran.pojo" />
 		<property name="dataSource" ref="dataSource"/>

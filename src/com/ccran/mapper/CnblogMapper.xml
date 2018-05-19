@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 接口映射 -->
+<mapper namespace="com.ccran.mapper.CnblogMapper">
+	<select id="listTopFansAuthor" parameterType="_int" resultType="com.ccran.pojo.CnblogAuthor">
+		select authorId as id,authorNickName,fans,attention,(select sum(readNum) from cnblog_blog 
+		where authorId=id) as readSum from cnblog_author order by fans desc limit #{limit};
+	</select>
+	<select id="listTopReadAuthor" parameterType="_int" resultType="com.ccran.pojo.CnblogAuthor">
+		select cnblog_author.authorId as id,authorNickName,fans,attention,sum(readNum) as readSum from cnblog_author,cnblog_blog
+		where cnblog_author.authorId=cnblog_blog.authorId
+		group by cnblog_author.authorId
+		order by readSum desc limit #{limit};
+	</select>
+	<!-- 多参数使用#{index}访问，对符号进行替换-->
+	<select id="listYearAuthorCreatedNum" resultType="_int">
+		select count(*) from cnblog_author where createDate&gt;#{0} and createDate&lt;#{1}
+	</select>
+</mapper>

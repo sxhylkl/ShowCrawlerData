@@ -14,7 +14,6 @@
 <!-- Bootstrap core CSS -->
 <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" />
 <!-- Custom styles for this template -->
-<link href="${pageContext.request.contextPath}/css/cover.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/chart.css" rel="stylesheet" />
 </head>
 <body>
@@ -46,28 +45,34 @@
 		<div class="row featurette">
 			<div class="col-md-7">
 				<h2 class="featurette-heading">
-					First featurette heading. <span class="text-muted">It&#39;ll blow your mind.</span>
+					cnblogs博客园博主信息展示
 				</h2>
-				<p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula
-					porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-					Fusce dapibus, tellus ac cursus commodo.</p>
+				<p class="lead">
+					这里主要完成对cnblogs博客园博主相关信息的展示
+				</p>
 			</div>
 			<div class="col-md-5">
-				<h1>图表</h1>
+				<div id="author-created-num" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 		<hr class="featurette-divider" />
 		<div class="row featurette">
-			<div class="col-md-7">
-				<h2 class="featurette-heading">
-					First featurette heading. <span class="text-muted">It&#39;ll blow your mind.</span>
-				</h2>
-				<p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula
-					porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-					Fusce dapibus, tellus ac cursus commodo.</p>
+			<div class="col-md-5">
+				<!-- Echarts通过DOM生成 -->
+				<div id="top-fans-author" style="width: 600px; height: 400px;"></div>
 			</div>
 			<div class="col-md-5">
-				<h1>图表</h1>
+				<h1>兰丁格尔图了解一下</h1>
+			</div>
+		</div>
+		<hr class="featurette-divider" />
+		<div class="row featurette">
+			<div class="col-md-5">
+				<!-- Echarts通过DOM生成 -->
+				<div id="read-top-author" style="width: 600px; height: 400px;"></div>
+			</div>
+			<div class="col-md-5">
+				<h1>兰丁格尔图了解一下</h1>
 			</div>
 		</div>
 	</div>
@@ -76,5 +81,7 @@
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/echarts.js"></script>
+	<script src="${pageContext.request.contextPath}/js/cnblogs.js"></script>
 </body>
 </html>

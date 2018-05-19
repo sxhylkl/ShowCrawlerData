@@ -52,11 +52,11 @@
 						<!--bootstrap栅栏系统-->
 						<div class="row">
 							<div class="col-sm-6">
-								<p>100,000,000</p>
+								<p>${requestScope.blogSum}</p>
 								<h3>博客量</h3>
 							</div>
 							<div class="col-sm-6">
-								<p>100,000,000</p>
+								<p>${requestScope.authorSum}</p>
 								<h3>博主量</h3>
 							</div>
 						</div>
