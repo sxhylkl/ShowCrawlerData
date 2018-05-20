@@ -128,7 +128,7 @@ var readTopChartOption = {
 // 创建年份图表配置
 var createNumOption = {
 	title : {
-		text : "博主创建量"
+		text : "博主年度创建量"
 	},
 	legend : {
 		data : [ '创建量' ]
@@ -173,7 +173,6 @@ topFansChart.on("click", function (param) {
 	// 发表博客主题的ajax
 	$.ajax({
 		type : 'get',
-		//嵌套ajax同步标志设置为false，避免出现数据未加载情况
 		asyn : true,
 		//get请求的数据,发送id进行请求构造
 		data : {
@@ -217,7 +216,6 @@ readTopAuthorChart.on("click", function (param) {
 	// 发表博客主题的ajax
 	$.ajax({
 		type : 'get',
-		//嵌套ajax同步标志设置为false，避免出现数据未加载情况
 		asyn : true,
 		//get请求的数据,发送id进行请求构造
 		data : {
@@ -309,7 +307,7 @@ $.ajax({
 $.ajax({
 	type : 'get',
 	asyn : true,
-	url : 'listYearCreatedNum',
+	url : 'listYearAuthorCreatedNum',
 	contentType : 'application/json;charset=utf-8',
 	dataType : 'json', // 很关键，否则返回的data为字符串
 	// 请求的json，设置

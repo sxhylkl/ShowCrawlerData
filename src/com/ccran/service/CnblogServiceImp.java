@@ -3,10 +3,12 @@ package com.ccran.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.ansj.domain.Result;
 import org.ansj.domain.Term;
@@ -29,15 +31,16 @@ public class CnblogServiceImp implements CnblogService {
 
 	/**
 	 * 通过提供作者列表返回封装好的json对象
+	 * 
 	 * @param authorList
 	 * @return
 	 */
-	private JSONObject getByCnblogAuthorList(List<CnblogAuthor> authorList){
+	private JSONObject getByCnblogAuthorList(List<CnblogAuthor> authorList) {
 		List<String> nameList = new ArrayList<String>();
 		List<Integer> fansList = new ArrayList<Integer>();
 		List<Integer> attentionList = new ArrayList<Integer>();
 		List<Integer> readSumList = new ArrayList<Integer>();
-		List<Integer> idList=new ArrayList<Integer>();
+		List<Integer> idList = new ArrayList<Integer>();
 		for (CnblogAuthor author : authorList) {
 			nameList.add(author.getName());
 			fansList.add(author.getFans());
@@ -59,13 +62,54 @@ public class CnblogServiceImp implements CnblogService {
 		return jo;
 	}
 	
+	/**
+	 * 通过博客列表获取关键字信息，一般用以作为前端词云数据
+	 * @return
+	 */
+	private JSONArray getKeywordByBlogList(List<CnblogBlog> blogList){
+		//创建关注的词性
+		Set<String> attentionNature=new HashSet<String>(){{
+			add("en");add("n");
+		}};
+		StringBuilder sb = new StringBuilder();
+		// 构造成句子
+		for (CnblogBlog blog : blogList) {
+			if (blog.getType() != null && !blog.getType().isEmpty()) {
+				sb.append(blog.getType() + ',');
+			} else if (blog.getTag() != null && !blog.getTag().isEmpty()) {
+				sb.append(blog.getTag() + ',');
+			} else {
+				sb.append(blog.getTitle() + ',');
+			}
+		}
+		// 通过ansj分词,并且通过HashMap进行词频统计
+		Map<String, Integer> wordCountMap = new HashMap<String, Integer>();
+		Result result = ToAnalysis.parse(sb.toString());
+		for (Term term : result.getTerms()) {
+			// 词性在关注词性的集合中进行累加计数
+			if (attentionNature.contains(term.getNatureStr())) {
+				String word = term.getName();
+				int times = wordCountMap.getOrDefault(word, 0);
+				wordCountMap.put(word, ++times);
+			}
+		}
+		// 遍历map进行添加
+		List<NameValuePojo> nameValueList = new ArrayList<NameValuePojo>();
+		Iterator iterator = wordCountMap.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, Integer> entry = (Entry<String, Integer>) iterator.next();
+			nameValueList.add(new NameValuePojo(entry.getValue(), entry.getKey()));
+		}
+		return JSONArray.parseArray(JSON.toJSONString(nameValueList));
+	}
+
 	@Override
 	public JSONObject getTopFansAuthorJson(int limit) {
 		// mapper查询数据
 		List<CnblogAuthor> authorList = cnblogAuthorMapper.listTopFansAuthor(limit);
 		return getByCnblogAuthorList(authorList);
 	}
-	
+
 	@Override
 	public JSONObject getTopReadAuthorJson(int limit) {
 		// mapper查询数据
@@ -98,41 +142,47 @@ public class CnblogServiceImp implements CnblogService {
 	}
 
 	@Override
-	public JSONObject getAuthorBlogTagById(int id) {
-		//根据Id获取博文列表
-		List<CnblogBlog> blogList=cnblogAuthorMapper.listAllBlogByAuthorId(id);
-		StringBuilder sb=new StringBuilder();
-		//构造成句子
-		for(CnblogBlog blog:blogList){
-			if(blog.getType()!=null && !blog.getType().isEmpty()){
-				sb.append(blog.getType()+',');
-			}else if(blog.getTag()!=null && !blog.getTag().isEmpty()){
-				sb.append(blog.getTag()+',');
-			}else{
-				sb.append(blog.getTitle()+',');
-			}
+	public JSONObject getAuthorBlogKeywordById(int id) {
+		// 根据Id获取博文列表
+		List<CnblogBlog> blogList = cnblogAuthorMapper.listAllBlogByAuthorId(id);
+		//获取关键字列表并返回
+		JSONArray keyWordArr=getKeywordByBlogList(blogList);
+		JSONObject res = new JSONObject();
+		res.put("series", keyWordArr);
+		return res;
+	}
+
+	@Override
+	public JSONObject getYearCreatedBlogNum() {
+		// 获取年份
+		int minYear = 2004, maxYear = Calendar.getInstance().get(Calendar.YEAR) + 1;
+		// 逐年获取数量进行封装
+		List<String> yearStrList = new ArrayList<String>();
+		List<Integer> createdNumList = new ArrayList<Integer>();
+		for (int i = minYear; i < maxYear; i++) {
+			// 年份添加
+			String now = String.valueOf(i), next = String.valueOf(i + 1);
+			yearStrList.add(now);
+			// 数量添加
+			int num = cnblogAuthorMapper.listYearBlogCreatedNum(now, next);
+			createdNumList.add(num);
 		}
-		//通过ansj分词,并且通过HashMap进行词频统计
-		Map<String,Integer> wordCountMap=new HashMap<String,Integer>();
-		Result result=ToAnalysis.parse(sb.toString());
-		for(Term term:result.getTerms()){
-			//如果是名词或者英文，进行统计
-			if("en".equals(term.getNatureStr()) || "n".equals(term.getNatureStr())){
-				String word=term.getName();
-				int times=wordCountMap.getOrDefault(word, 0);
-				wordCountMap.put(word, ++times);
-			}
-		}
-		//遍历map进行添加
-		List<NameValuePojo> nameValueList=new ArrayList<NameValuePojo>();
-		Iterator iterator=wordCountMap.entrySet().iterator();
-		while(iterator.hasNext()){
-			Map.Entry<String, Integer> entry=(Entry<String, Integer>) iterator.next();
-			nameValueList.add(new NameValuePojo(entry.getValue(),entry.getKey()));
-		}
-		JSONArray seriesArr=JSONArray.parseArray(JSON.toJSONString(nameValueList));
-		JSONObject jo=new JSONObject();
-		jo.put("series", seriesArr);
+		// 封装成json返回
+		JSONArray yearArr = JSONArray.parseArray(JSON.toJSONString(yearStrList));
+		JSONArray numArr = JSONArray.parseArray(JSON.toJSONString(createdNumList));
+		JSONObject jo = new JSONObject();
+		jo.put("year", yearArr);
+		jo.put("createdNum", numArr);
 		return jo;
+	}
+
+	@Override
+	public JSONObject getAllBlogKeyword() {
+		List<CnblogBlog> allBlogList=cnblogAuthorMapper.listAllBlog();
+		//获取关键字列表并返回
+		JSONArray keyWordArr=getKeywordByBlogList(allBlogList);
+		JSONObject res = new JSONObject();
+		res.put("series", keyWordArr);
+		return res;
 	}
 }

@@ -18,15 +18,27 @@ public interface CnblogService {
 	public JSONObject getTopReadAuthorJson(int limit);
 	
 	/**
-	 * 获取04年到当前年份的每年创建量，并且封装成json返回
+	 * 获取04年到当前年份的每年博主创建量，并且封装成json返回
 	 * @return
 	 */
 	public JSONObject getYearCreatedAuthorNum();
 	
 	/**
-	 * 通过id获取作者博客主题信息
+	 * 通过id获取作者博客关键字信息
 	 * @param id
 	 * @return
 	 */
-	public JSONObject getAuthorBlogTagById(int id);
+	public JSONObject getAuthorBlogKeywordById(int id);
+	
+	/**
+	 * 获取04年到当前年份的每年博客创建量，并且封装成json返回
+	 * @return
+	 */
+	public JSONObject getYearCreatedBlogNum();
+	
+	/**
+	 * 获取所有博客关键字信息
+	 * @return
+	 */
+	public JSONObject getAllBlogKeyword();
 }

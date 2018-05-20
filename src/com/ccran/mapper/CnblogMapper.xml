@@ -4,6 +4,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- 接口映射 -->
 <mapper namespace="com.ccran.mapper.CnblogMapper">
+	<!-- cnblogs所有博主相关信息查询-->
 	<!-- 查询粉丝量最多的博主 -->
 	<select id="listTopFansAuthor" parameterType="_int" resultType="com.ccran.pojo.CnblogAuthor">
 		select authorId as id,authorNickName,fans,attention,(select sum(readNum) from cnblog_blog 
@@ -24,5 +25,17 @@
 	<!-- 查询作者id所有文章 -->
 	<select id="listAllBlogByAuthorId" parameterType="_int" resultType="com.ccran.pojo.CnblogBlog">
 		select title,tag,type,readNum from cnblog_blog where authorId=#{id}
+	</select>
+	
+	
+	<!-- cnblogs所有博客相关信息查询-->
+	<!-- 通过设定时间间隔查询博客创建量 -->
+	<!-- 多参数使用#{index}访问，对符号进行替换-->
+	<select id="listYearBlogCreatedNum" resultType="_int">
+		select count(*) from cnblog_blog where publish&gt;#{0} and publish&lt;#{1}
+	</select>
+	
+	<select	id="listAllBlog" resultType="com.ccran.pojo.CnblogBlog">
+		select title,tag,type,readNum from cnblog_blog
 	</select>
 </mapper>

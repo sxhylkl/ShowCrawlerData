@@ -77,6 +77,30 @@
 			</div>
 		</div>
 		<hr class="featurette-divider" />
+		<div class="row featurette">
+			<div class="col-md-7">
+				<h2 class="featurette-heading">
+					cnblogs博客园博客信息展示
+				</h2>
+				<p class="lead">
+					这里主要完成对cnblogs博客园博客相关信息的展示
+				</p>
+			</div>
+			<div class="col-md-5">
+				<div id="blog-created-num" style="width: 600px; height: 400px;"></div>
+			</div>
+		</div>
+		<hr class="featurette-divider" />
+		<div class="row featurette">
+			<div class="col-md-7">
+				<h2 class="featurette-heading">
+					cnblogs当前爬取所有博文的词云展示
+				</h2>
+			</div>
+			<div class="col-md-5">
+				<div id="all-blog-wordcloud" style="width: 600px; height: 400px;"></div>
+			</div>
+		</div>
 	</div>
 	<!-- Bootstrap core JavaScript
     ================================================== -->
@@ -85,6 +109,7 @@
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/echarts.js"></script>
 	<script src="${pageContext.request.contextPath}/js/echarts-wordcloud.js"></script>
-	<script src="${pageContext.request.contextPath}/js/cnblogs.js"></script>
+	<script src="${pageContext.request.contextPath}/js/cnblogs-author.js"></script>
+	<script src="${pageContext.request.contextPath}/js/cnblogs-blog.js"></script>
 </body>
 </html>
