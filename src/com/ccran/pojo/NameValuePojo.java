@@ -8,7 +8,7 @@ package com.ccran.pojo;
 public class NameValuePojo {
 	private int value;
 	private String name;
-	public int getValue() {
+	public double getValue() {
 		return value;
 	}
 	public void setValue(int value) {

@@ -101,6 +101,15 @@
 				<div id="all-blog-wordcloud" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
+		<hr class="featurette-divider" />
+		<div class="row featurette">
+			<div class="col-md-7">
+				<div id="blog-year-readnum" style="width: 600px; height: 400px;"></div>
+			</div>
+			<div class="col-md-5">
+				<div id="blog-year-top-wordcount" style="width: 600px; height: 400px;"></div>
+			</div>
+		</div>
 	</div>
 	<!-- Bootstrap core JavaScript
     ================================================== -->

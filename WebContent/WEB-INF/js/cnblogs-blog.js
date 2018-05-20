@@ -46,7 +46,7 @@ $.ajax({
 			series : [ {
 				// 根据名字对应到相应的系列
 				name : '创建量',
-				data : data.createdNum
+				data : data.num
 			} ]
 		});
 	}

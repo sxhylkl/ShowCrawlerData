@@ -34,8 +34,12 @@
 	<select id="listYearBlogCreatedNum" resultType="_int">
 		select count(*) from cnblog_blog where publish&gt;#{0} and publish&lt;#{1}
 	</select>
-	
+	<!-- 查询所有博客 -->
 	<select	id="listAllBlog" resultType="com.ccran.pojo.CnblogBlog">
 		select title,tag,type,readNum from cnblog_blog
+	</select>
+	<!-- 根据年份查询博客阅读量 -->
+	<select id="getYearReadNum" resultType="_int">
+		select sum(readNum) from cnblog_blog where publish&gt;#{0} and publish&lt;#{1}
 	</select>
 </mapper>

@@ -25,4 +25,7 @@ public interface CnblogMapper {
 	
 	//查询所有博客
 	public List<CnblogBlog> listAllBlog();
+	
+	//查询年份min-max年份之间的博客阅读量
+	public int getYearReadNum(String min,String max);
 }

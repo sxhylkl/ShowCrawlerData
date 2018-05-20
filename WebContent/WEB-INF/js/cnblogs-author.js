@@ -11,7 +11,7 @@ var readTopAuthorChart = echarts.init(document
 // 粉丝量排行博主的博客阅读图表配置
 var fansBogTagChartOption = {
 	title : {
-		text : '博客主题',
+		text : '博主发表博客关键字',
 		subtext: '博主昵称',
 		x : 'center'
 	},
@@ -320,7 +320,7 @@ $.ajax({
 			series : [ {
 				// 根据名字对应到相应的系列
 				name : '创建量',
-				data : data.createdNum
+				data : data.num
 			} ]
 		});
 	}
