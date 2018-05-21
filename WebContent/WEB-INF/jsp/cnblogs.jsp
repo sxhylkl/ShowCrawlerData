@@ -52,7 +52,8 @@
 				</p>
 			</div>
 			<div class="col-md-5">
-				<div id="author-created-num" style="width: 600px; height: 400px;"></div>
+				<!-- 博主年度创建量 -->
+				<div id="author-year-created-num" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 		<hr class="featurette-divider" />
@@ -62,7 +63,7 @@
 				<div id="top-fans-author" style="width: 600px; height: 400px;"></div>
 			</div>
 			<div class="col-md-4">
-				<div id="read-top-author" style="width: 600px; height: 400px;"></div>
+				<div id="top-read-num-author" style="width: 600px; height: 400px;"></div>
 			</div>
 			<div class="col-md-7">
 				<h2 class="featurette-heading">
@@ -73,7 +74,7 @@
 				</p>
 			</div>
 			<div class="col-md-4">
-				<div id="top-fans-author-blog-tag" style="width: 600px; height: 400px;"></div>
+				<div id="author-blog-wordcloud" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 		<hr class="featurette-divider" />
@@ -87,7 +88,7 @@
 				</p>
 			</div>
 			<div class="col-md-5">
-				<div id="blog-created-num" style="width: 600px; height: 400px;"></div>
+				<div id="blog-year-created-num" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 		<hr class="featurette-divider" />
@@ -118,7 +119,7 @@
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/echarts.js"></script>
 	<script src="${pageContext.request.contextPath}/js/echarts-wordcloud.js"></script>
-	<script src="${pageContext.request.contextPath}/js/cnblogs-author.js"></script>
-	<script src="${pageContext.request.contextPath}/js/cnblogs-blog.js"></script>
+	<!-- 自定义js -->
+	<script src="${pageContext.request.contextPath}/js/cnblogs.js"></script>
 </body>
 </html>
