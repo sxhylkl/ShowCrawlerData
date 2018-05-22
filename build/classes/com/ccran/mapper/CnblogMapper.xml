@@ -38,8 +38,12 @@
 	<select	id="listAllBlog" resultType="com.ccran.pojo.CnblogBlog">
 		select title,tag,type,readNum from cnblog_blog
 	</select>
+	<!-- 查询年份查询所有博客 -->
+	<select id="listBlogByYear" resultType="com.ccran.pojo.CnblogBlog">
+		select title,tag,type,readNum from cnblog_blog where publish&gt;#{0} and publish&lt;#{1}
+	</select>
 	<!-- 根据年份查询博客阅读量 -->
-	<select id="getYearReadNum" resultType="_int">
-		select sum(readNum) from cnblog_blog where publish&gt;#{0} and publish&lt;#{1}
+	<select id="listYearReadNum" resultType="_int">
+		select ifnull(sum(readNum),0) as sumRead from cnblog_blog where publish&gt;#{0} and publish&lt;#{1}
 	</select>
 </mapper>

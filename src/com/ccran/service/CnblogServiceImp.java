@@ -2,6 +2,8 @@ package com.ccran.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -119,23 +121,23 @@ public class CnblogServiceImp implements CnblogService {
 				add("n");
 			}
 		};
-		//遍历并进行统计
-		Map<String,Integer> wordCountMap=new HashMap<String,Integer>();
-		//分词并统计O(n2)复杂度
-		for(CnblogBlog blog:blogList){
-			//获取标题以及阅读量
-			String title=blog.getTitle();
-			int readNum=blog.getReadNum();
-			//保证阅读量大于0
-			readNum+=1;
-			if(title!=null){
-				Result result=ToAnalysis.parse(title);
-				for(Term term:result.getTerms()){
-					if(attentionNature.contains(term.getNatureStr())){
+		// 遍历并进行统计
+		Map<String, Integer> wordCountMap = new HashMap<String, Integer>();
+		// 分词并统计O(n2)复杂度
+		for (CnblogBlog blog : blogList) {
+			// 获取标题以及阅读量
+			String title = blog.getTitle();
+			int readNum = blog.getReadNum();
+			// 保证阅读量大于0
+			readNum += 1;
+			if (title != null) {
+				Result result = ToAnalysis.parse(title);
+				for (Term term : result.getTerms()) {
+					if (attentionNature.contains(term.getNatureStr())) {
 						String word = term.getName();
 						int times = wordCountMap.getOrDefault(word, 0);
-						//通过阅读量进行比重的配置
-						wordCountMap.put(word, times+readNum);
+						// 通过阅读量进行比重的配置
+						wordCountMap.put(word, times + readNum);
 					}
 				}
 			}
@@ -148,7 +150,7 @@ public class CnblogServiceImp implements CnblogService {
 	 * 
 	 * @return
 	 */
-	private JSONObject getKeywordByMap(Map<String, Integer> wordCountMap) {
+	private JSONObject getKeywordByWordCountMap(Map<String, Integer> wordCountMap) {
 		// 遍历map进行添加
 		List<NameValuePojo> nameValueList = new ArrayList<NameValuePojo>();
 		Iterator iterator = wordCountMap.entrySet().iterator();
@@ -177,31 +179,6 @@ public class CnblogServiceImp implements CnblogService {
 	}
 
 	/**
-	 * 每年创建作者数量数据构造
-	 */
-	@Override
-	public JSONObject getYearCreatedAuthorNum() {
-		// 逐年获取数量进行封装
-		List<String> yearStrList = new ArrayList<String>();
-		List<Integer> createdNumList = new ArrayList<Integer>();
-		for (int i = MIN_YEAR; i < MAX_YEAR; i++) {
-			// 年份添加
-			String now = String.valueOf(i), next = String.valueOf(i + 1);
-			yearStrList.add(now);
-			// 数量添加
-			int num = cnblogAuthorMapper.listYearAuthorCreatedNum(now, next);
-			createdNumList.add(num);
-		}
-		// 封装成json返回
-		JSONArray yearArr = JSONArray.parseArray(JSON.toJSONString(yearStrList));
-		JSONArray numArr = JSONArray.parseArray(JSON.toJSONString(createdNumList));
-		JSONObject jo = new JSONObject();
-		jo.put("year", yearArr);
-		jo.put("num", numArr);
-		return jo;
-	}
-
-	/**
 	 * 作者词云数据的构造
 	 */
 	@Override
@@ -210,32 +187,7 @@ public class CnblogServiceImp implements CnblogService {
 		List<CnblogBlog> blogList = cnblogAuthorMapper.listAllBlogByAuthorId(id);
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogList(blogList);
-		return getKeywordByMap(wordCountMap);
-	}
-
-	/**
-	 * 每年创建博文数据构造
-	 */
-	@Override
-	public JSONObject getYearCreatedBlogNum() {
-		// 逐年获取数量进行封装
-		List<String> yearStrList = new ArrayList<String>();
-		List<Integer> createdNumList = new ArrayList<Integer>();
-		for (int i = MIN_YEAR; i < MAX_YEAR; i++) {
-			// 年份添加
-			String now = String.valueOf(i), next = String.valueOf(i + 1);
-			yearStrList.add(now);
-			// 数量添加
-			int num = cnblogAuthorMapper.listYearBlogCreatedNum(now, next);
-			createdNumList.add(num);
-		}
-		// 封装成json返回
-		JSONArray yearArr = JSONArray.parseArray(JSON.toJSONString(yearStrList));
-		JSONArray numArr = JSONArray.parseArray(JSON.toJSONString(createdNumList));
-		JSONObject jo = new JSONObject();
-		jo.put("year", yearArr);
-		jo.put("num", numArr);
-		return jo;
+		return getKeywordByWordCountMap(wordCountMap);
 	}
 
 	/**
@@ -247,6 +199,85 @@ public class CnblogServiceImp implements CnblogService {
 		List<CnblogBlog> allBlogList = cnblogAuthorMapper.listAllBlog();
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogListWithReadNum(allBlogList);
-		return getKeywordByMap(wordCountMap);
+		return getKeywordByWordCountMap(wordCountMap);
+	}
+
+	/**
+	 * 年份数据，博主年创建量，博客年发表量，博客年阅读量
+	 */
+	@Override
+	public JSONObject getYearData() {
+		// 逐年获取数量进行封装
+		List<String> yearStrList = new ArrayList<String>();
+		List<Integer> authorCreatedNumList = new ArrayList<Integer>();
+		List<Integer> blogPublishNumList = new ArrayList<Integer>();
+		List<Integer> blogReadNumList = new ArrayList<Integer>();
+		for (int i = MIN_YEAR; i < MAX_YEAR; i++) {
+			// 年份添加
+			String now = String.valueOf(i), next = String.valueOf(i + 1);
+			yearStrList.add(now);
+			// 博主年创建数量添加
+			int num = cnblogAuthorMapper.listYearAuthorCreatedNum(now, next);
+			authorCreatedNumList.add(num);
+			// 博客年发表数量添加
+			num = cnblogAuthorMapper.listYearBlogCreatedNum(now, next);
+			blogPublishNumList.add(num);
+			// 博客年阅读量添加
+			num = cnblogAuthorMapper.listYearReadNum(now, next);
+			blogReadNumList.add(num);
+		}
+		// 封装成json返回
+		JSONArray yearArr = JSONArray.parseArray(JSON.toJSONString(yearStrList));
+		JSONArray authorCreatedNumArr = JSONArray.parseArray(JSON.toJSONString(authorCreatedNumList));
+		JSONArray blogPublishNumArr = JSONArray.parseArray(JSON.toJSONString(blogPublishNumList));
+		JSONArray blogReadNumArr = JSONArray.parseArray(JSON.toJSONString(blogReadNumList));
+		JSONObject jo = new JSONObject();
+		jo.put("year", yearArr);
+		jo.put("authorCreatedNum", authorCreatedNumArr);
+		jo.put("blogPublishNum", blogPublishNumArr);
+		jo.put("blogReadNum", blogReadNumArr);
+		return jo;
+	}
+
+	/**
+	 * map根据value排序
+	 * @return
+	 */
+	private List<Map.Entry<String, Integer>> getListOrderByMapValue(Map<String,Integer> map){
+		List<Map.Entry<String, Integer>> res = 
+				new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
+		Collections.sort(res, new Comparator<Map.Entry<String, Integer>>() {   
+		    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {      
+		        return (o2.getValue() - o1.getValue()); 
+		    }
+		}); 
+		return res;
+	}
+	
+	@Override
+	public JSONObject getBlogMainTopicByYearAndNum(int year, int topicNum) {
+		//首先获取year-year+1之间所有博客
+		List<CnblogBlog> blogList=cnblogAuthorMapper
+				.listBlogByYear(String.valueOf(year), String.valueOf(year+1));
+		// 生成词频Map
+		Map<String, Integer> wordCountMap = getWordCountMapByBlogListWithReadNum(blogList);
+		List<Map.Entry<String, Integer>> res = getListOrderByMapValue(wordCountMap);
+		//获取排序结果,根据数量进行json生成并返回
+		List<String> legendList=new ArrayList<String>(topicNum);
+		List<NameValuePojo> seriesList=new ArrayList<NameValuePojo>(topicNum);
+		for(int i=0;i<topicNum && i<res.size();i++){
+			legendList.add(res.get(i).getKey());
+			seriesList.add(new NameValuePojo(res.get(i).getValue(),res.get(i).getKey()));
+		}
+		if(legendList.isEmpty()){
+			legendList.add("无");
+			seriesList.add(new NameValuePojo(0,"无"));
+		}
+		JSONArray legendArr=JSONArray.parseArray(JSON.toJSONString(legendList));
+		JSONArray seriesArr=JSONArray.parseArray(JSON.toJSONString(seriesList));
+		JSONObject jo=new JSONObject();
+		jo.put("legend", legendArr);
+		jo.put("series", seriesArr);
+		return jo;
 	}
 }

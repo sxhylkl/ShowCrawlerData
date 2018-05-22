@@ -19,13 +19,12 @@ public interface CnblogMapper {
 	public int listYearAuthorCreatedNum(String min,String max);
 	//根据id获取CnblogBlog列表
 	public List<CnblogBlog> listAllBlogByAuthorId(int id);
-	
 	//查询年份min-max年份之间博客创建数量
 	public int listYearBlogCreatedNum(String min,String max);
-	
 	//查询所有博客
 	public List<CnblogBlog> listAllBlog();
-	
 	//查询年份min-max年份之间的博客阅读量
-	public int getYearReadNum(String min,String max);
+	public int listYearReadNum(String min,String max);
+	//查询年份min-max年份之间的所有博客
+	public List<CnblogBlog> listBlogByYear(String min,String max);
 }

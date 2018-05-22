@@ -20,32 +20,32 @@ public class CnblogController {
 	}
 
 	// 根据数量获取前limit阅读量博主的json信息
-	@RequestMapping("/listTopReadAuthor")
+	@RequestMapping("/listTopReadNumAuthor")
 	public @ResponseBody JSONObject getTopReadAuthorJson(int limit) {
 		return cnblogAuthorService.getTopReadAuthorJson(limit);
 	}
 
-	// 获取每年创建的博主数量
-	@RequestMapping("/listYearAuthorCreatedNum")
-	public @ResponseBody JSONObject getYearCreatedAuthorNum() {
-		return cnblogAuthorService.getYearCreatedAuthorNum();
-	}
-
 	// 获取作者id的博文主题
-	@RequestMapping("/getAuthorBlogTag")
-	public @ResponseBody JSONObject getAuthorBlogTag(int id) {
+	@RequestMapping("/getAuthorBlogKeyword")
+	public @ResponseBody JSONObject getAuthorBlogKeyword(int id) {
 		return cnblogAuthorService.getAuthorBlogKeywordById(id);
-	}
-
-	// 获取每年创建的博客数量
-	@RequestMapping("/listYearBlogCreatedNum")
-	public @ResponseBody JSONObject getYearCreatedBlogNum() {
-		return cnblogAuthorService.getYearCreatedBlogNum();
 	}
 
 	// 获取所有博客组成的词云
 	@RequestMapping("/getAllBlogWordCloud")
 	public @ResponseBody JSONObject getAllBlogWordCloud() {
 		return cnblogAuthorService.getAllBlogKeyword();
+	}
+
+	// 获取由年份组成的数据
+	@RequestMapping("/listYearData")
+	public @ResponseBody JSONObject getYearData() {
+		return cnblogAuthorService.getYearData();
+	}
+	
+	//根据年份以及主题数量，获取年份主题
+	@RequestMapping("/getBlogYearMainTopic")
+	public @ResponseBody JSONObject getBlogYearMainTopic(int year,int topicNum) {
+		return cnblogAuthorService.getBlogMainTopicByYearAndNum(year,topicNum);
 	}
 }

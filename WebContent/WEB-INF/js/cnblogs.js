@@ -1,10 +1,63 @@
 //全局博主ID
 var topFansAuthorId, topReadNumAuthorId;
+// 环形图基本配置
+var doughnutChartOption = {
+	title : {
+		text : '',
+		x : 'center'
+	},
+	tooltip : {
+		trigger : 'item',
+		formatter : "{a} <br/>{b}: {c} ({d}%)"
+	},
+	legend : {
+		orient : 'vertical',
+		x : 'right',
+		data : []
+	},
+	series : [ {
+		name : '主题',
+		type : 'pie',
+		radius : [ '50%', '70%' ],
+		avoidLabelOverlap : false,
+		label : {
+			normal : {
+				show : false,
+				position : 'center'
+			},
+			emphasis : {
+				show : true,
+				textStyle : {
+					fontSize : '30',
+					fontWeight : 'bold'
+				}
+			}
+		},
+		labelLine : {
+			normal : {
+				show : false
+			}
+		},
+		data : []
+	} ]
+};
+
 // 词云基本配置
 var wordCloudOption = {
 	title : {
 		text : '',
 		x : 'center'
+	},
+	toolbox : {
+		feature : {
+			dataView : {
+				show : true,
+				readOnly : false
+			},
+			saveAsImage : {
+				show : true
+			}
+		}
 	},
 	tooltip : {
 		show : true
@@ -47,6 +100,17 @@ var barGraphOption = {
 	title : {
 		text : ''
 	},
+	toolbox : {
+		feature : {
+			dataView : {
+				show : true,
+				readOnly : false
+			},
+			saveAsImage : {
+				show : true
+			}
+		}
+	},
 	tooltip : {},
 	xAxis : {
 		data : [],
@@ -65,6 +129,17 @@ var barGraphOption = {
 var lineChartOption = {
 	title : {
 		text : ''
+	},
+	toolbox : {
+		feature : {
+			dataView : {
+				show : true,
+				readOnly : false
+			},
+			saveAsImage : {
+				show : true
+			}
+		}
 	},
 	legend : {
 		data : []
@@ -90,22 +165,217 @@ var lineChartOption = {
 	} ]
 };
 
+// 折线图、柱状图混合
+var mixedChartOption = {
+	tooltip : {
+		trigger : 'axis',
+		axisPointer : {
+			type : 'cross',
+			crossStyle : {
+				color : '#999'
+			}
+		}
+	},
+	toolbox : {
+		feature : {
+			dataView : {
+				show : true,
+				readOnly : false
+			},
+			magicType : {
+				show : true,
+				type : [ 'line', 'bar' ]
+			},
+			restore : {
+				show : true
+			},
+			saveAsImage : {
+				show : true
+			}
+		}
+	},
+	legend : {
+		data : [ '发表量', '阅读量' ]
+	},
+	xAxis : [ {
+		type : 'category',
+		data : [],
+		axisPointer : {
+			type : 'shadow'
+		},
+		axisLabel : {
+			interval : 0,
+			rotate : 40
+		},
+		// 开启x轴点击事件
+		triggerEvent : true
+	} ],
+	yAxis : [ {
+		type : 'value',
+		name : '发表数目'
+	}, {
+		type : 'value',
+		name : '阅读数目',
+		axisLabel : {
+			// 对刻度数量进行格式化
+			formatter : function(value, index) {
+				return value / 1000 + 'k'
+			}
+		}
+	} ],
+	series : [ {
+		name : '发表量',
+		type : 'bar',
+		data : []
+	}, {
+		name : '阅读量',
+		type : 'line',
+		yAxisIndex : 1,
+		data : []
+	} ]
+};
+
 /**
  * 1.包括博主年度创建量图、博客年度创建量图、博客年度阅读量图以及其相关的年度博客关键字图
  */
+
+// 年度最热主题环形图,数据生成依赖于博客年度图
+var blogYearMainTopicChart = echarts.init(document
+		.getElementById('blog-year-main-topic'));
+blogYearMainTopicChart.setOption(doughnutChartOption);
+blogYearMainTopicChart.showLoading();
+
+// 博主年度创建量图
 var authorYearCreatedNumChart = echarts.init(document
 		.getElementById('author-year-created-num'));
 authorYearCreatedNumChart.setOption(lineChartOption);
 authorYearCreatedNumChart.showLoading();
 
-var blogYearCreatedNumChart = echarts
-		.init(document.getElementById('blog-year-created-num'));
-blogYearCreatedNumChart.setOption(lineChartOption);
-blogYearCreatedNumChart.showLoading();
+/**
+ * 通过年份、主题数量、是否异步获取博客年度主题表的数据
+ */
+function getBlogYearMainTopicChartData(year, topicNum, isAsyn) {
+	$.ajax({
+		type : 'get',
+		asyn : isAsyn,
+		// get请求的数据,发送id进行请求构造
+		data : {
+			year : year,
+			topicNum : topicNum
+		},
+		url : 'getBlogYearMainTopic',
+		contentType : 'application/json;charset=utf-8',
+		dataType : 'json', // 很关键，否则返回的data为字符串
+		// 请求的json，设置
+		success : function(data) {
+			blogYearMainTopicChart.hideLoading();
+			blogYearMainTopicChart.setOption({
+				title : {
+					text : year+'年博客年度主题',
+					x : 'center'
+				},
+				legend : {
+					orient : 'vertical',
+					x : 'left',
+					data : data.legend
+				},
+				series : [ {
+					data : data.series
+				} ]
+			});
+		}
+	});
+}
 
-var allBlogWordCloud = echarts.init(document.getElementById('all-blog-wordcloud'));
+// 博客年度数量图
+var blogYearNumChart = echarts.init(document.getElementById('blog-year-num'));
+blogYearNumChart.setOption(mixedChartOption);
+blogYearNumChart.showLoading();
+getBlogYearMainTopicChartData(2018,5,true);
+blogYearNumChart.on("click", function(param) {
+	// 根据点击的是xAsix还是series进行年份的获取
+	var year;
+	if (param.componentType == 'series') {
+		year=param.name;
+	} else if (param.componentType == 'xAxis') {
+		year=param.value;
+	}
+	getBlogYearMainTopicChartData(year,5,true);
+})
+
+// 各种年度数据的ajax请求
+$.ajax({
+	type : 'get',
+	asyn : true,
+	url : 'listYearData',
+	contentType : 'application/json;charset=utf-8',
+	dataType : 'json', // 很关键，否则返回的data为字符串
+	// 请求的json，设置
+	success : function(data) {
+		authorYearCreatedNumChart.hideLoading();
+		authorYearCreatedNumChart.setOption({
+			title : {
+				text : "博主年度创建量"
+			},
+			legend : {
+				data : [ '创建量' ]
+			},
+			xAxis : {
+				data : data.year
+			},
+			series : [ {
+				// 根据名字对应到相应的系列
+				name : '创建量',
+				data : data.authorCreatedNum
+			} ]
+		});
+		blogYearNumChart.hideLoading();
+		blogYearNumChart.setOption({
+			title : {
+				text : "博客年度发表量"
+			},
+			xAxis : [ {
+				data : data.year
+			} ],
+			series : [ {
+				name : '发表量',
+				type : 'bar',
+				yAsixIndex : 0,
+				data : data.blogPublishNum
+			}, {
+				// 指定yAsix对应的索引，同时类型为折线
+				name : '阅读量',
+				type : 'line',
+				yAsixIndex : 1,
+				data : data.blogReadNum
+			} ]
+		});
+	}
+});
+// 所有博客关键字词云
+var allBlogWordCloud = echarts.init(document
+		.getElementById('all-blog-wordcloud'));
 allBlogWordCloud.setOption(wordCloudOption);
 allBlogWordCloud.showLoading();
+// 所有博客关键字ajax获取
+$.ajax({
+	type : 'get',
+	asyn : true,
+	url : 'getAllBlogWordCloud',
+	contentType : 'application/json;charset=utf-8',
+	dataType : 'json',
+	success : function(data) {
+		allBlogWordCloud.hideLoading();
+		allBlogWordCloud.setOption({
+			title : {
+				text : '所有博客关键字'
+			},
+			series : [ {
+				data : data.series
+			} ]
+		});
+	}
+});
 
 /**
  * 通过博主id以及博主名称设置词云数据
@@ -118,7 +388,7 @@ function getAuthorPublishBlogWordCloudData(authorid, authorname, isAsyn) {
 		data : {
 			id : authorid
 		},
-		url : 'getAuthorBlogTag',
+		url : 'getAuthorBlogKeyword',
 		contentType : 'application/json;charset=utf-8',
 		dataType : 'json', // 很关键，否则返回的data为字符串
 		// 请求的json，设置
@@ -209,7 +479,7 @@ $.ajax({
 		// 隐藏加载动画，对Option数据赋值
 		topFansAuthorChart.hideLoading();
 		topFansAuthorChart.setOption({
-			title :{
+			title : {
 				text : '博主粉丝量排行榜'
 			},
 			legend : {
@@ -252,7 +522,7 @@ $.ajax({
 	data : {
 		limit : "8"
 	},
-	url : 'listTopReadAuthor',
+	url : 'listTopReadNumAuthor',
 	contentType : 'application/json;charset=utf-8',
 	dataType : 'json', // 很关键，否则返回的data为字符串
 	// 请求的json，设置
@@ -260,7 +530,7 @@ $.ajax({
 		topReadNumAuthorId = data.id;
 		topReadNumAuthorChart.hideLoading();
 		topReadNumAuthorChart.setOption({
-			title :{
+			title : {
 				text : '博文阅读量排行榜'
 			},
 			legend : {
@@ -289,82 +559,6 @@ $.ajax({
 				name : '粉丝量',
 				type : 'bar',
 				data : data.fans
-			} ]
-		});
-	}
-});
-
-//博主创建年度数据的ajax请求
-$.ajax({
-	type : 'get',
-	asyn : true,
-	url : 'listYearAuthorCreatedNum',
-	contentType : 'application/json;charset=utf-8',
-	dataType : 'json', // 很关键，否则返回的data为字符串
-	// 请求的json，设置
-	success : function(data) {
-		authorYearCreatedNumChart.hideLoading();
-		authorYearCreatedNumChart.setOption({
-			title : {
-				text : "博主年度创建量"
-			},
-			legend : {
-				data : [ '创建量' ]
-			},
-			xAxis : {
-				data : data.year
-			},
-			series : [ {
-				// 根据名字对应到相应的系列
-				name : '创建量',
-				data : data.num
-			} ]
-		});
-	}
-});
-//博客创建的年度数据ajax请求
-$.ajax({
-	type : 'get',
-	asyn : true,
-	url : 'listYearBlogCreatedNum',
-	contentType : 'application/json;charset=utf-8',
-	dataType : 'json', // 很关键，否则返回的data为字符串
-	// 请求的json，设置
-	success : function(data) {
-		blogYearCreatedNumChart.hideLoading();
-		blogYearCreatedNumChart.setOption({
-			title : {
-				text : "博客年度创建量"
-			},
-			legend : {
-				data : [ '创建量' ]
-			},
-			xAxis : {
-				data : data.year
-			},
-			series : [ {
-				// 根据名字对应到相应的系列
-				name : '创建量',
-				data : data.num
-			} ]
-		});
-	}
-});
-//所有博客关键字ajax获取
-$.ajax({
-	type : 'get',
-	asyn : true,
-	url : 'getAllBlogWordCloud',
-	contentType : 'application/json;charset=utf-8',
-	dataType : 'json',
-	success : function(data) {
-		allBlogWordCloud.hideLoading();
-		allBlogWordCloud.setOption({
-			title:{
-				text : '所有博客关键字'
-			},
-			series : [ {
-				data : data.series
 			} ]
 		});
 	}
