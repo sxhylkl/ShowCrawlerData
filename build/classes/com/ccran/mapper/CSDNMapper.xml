@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ccran.mapper.CSDNMapper">
+	<!-- CSDN博客信息 -->
+	<!-- 列出年份之间的博客数量 -->
+	<select id="listYearBlogPublishNum" resultType="_int">
+		select count(*) from csdn_blog where publishTime&gt;#{0} and publishTime&lt;#{1}
+	</select>
+	<!-- 列出年份之间的博客阅读量 -->
+	<select id="listYearBlogReadNum" resultType="_int">
+		select sum(readNum) from csdn_blog where publishTime&gt;#{0} and publishTime&lt;#{1}
+	</select>
+	<!-- 列出年份之间所有博客 -->
+	<select id="listYearBlogs" resultType="com.ccran.pojo.CSDNBlog">
+		select title,tag,readNum from csdn_blog where publishTime&gt;#{0} and publishTime&lt;#{1}
+	</select>
+	<!-- 列出所有博客 -->
+	<select id="listAllBlogs" resultType="com.ccran.pojo.CSDNBlog">
+		select title,tag,readNum from csdn_blog
+	</select>
+	
+	<!-- CSDN博主信息 -->
+	<!-- 列出前top名博主信息 -->
+	<select id="listTopRank" resultType="com.ccran.pojo.CSDNAuthor" parameterType="_int">
+		select authorId,authorName,blogNum,fansNum,likeNum,commentNum,levelNum,visitNum,integral
+			from csdn_author where rank >= 1 order by rank asc limit #{limit};
+	</select>
+	<!-- 列出博主所有博客 -->
+	<select id="listAuthorBlogById" resultType="com.ccran.pojo.CSDNBlog" parameterType="_int">
+		select title,tag,readNum from csdn_blog where authorId=#{id}
+	</select>
+	
+</mapper>

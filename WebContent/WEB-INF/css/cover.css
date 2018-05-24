@@ -134,6 +134,10 @@ body {
  */
 
 @media (min-width: 768px) {
+  /* Start the vertical bottom */
+  .site-wrapper-inner {
+    vertical-align: bottom;
+  }
   /* Pull out the header and footer */
   .masthead {
     position: fixed;
@@ -142,10 +146,6 @@ body {
   .mastfoot {
     position: fixed;
     bottom: 0;
-  }
-  /* Start the vertical bottom */
-  .site-wrapper-inner {
-    vertical-align: bottom;
   }
   /* Handle the widths */
   .masthead,
@@ -156,7 +156,6 @@ body {
 }
 
 @media (min-width: 992px) {
-	
   /* Start the vertical middle */
   .site-wrapper-inner {
     vertical-align: middle;

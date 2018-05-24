@@ -45,28 +45,31 @@
 		<div class="row featurette">
 			<div class="col-md-7">
 				<h2 class="featurette-heading">
-					First featurette heading. <span class="text-muted">It&#39;ll blow your mind.</span>
+					csdn信息展示
 				</h2>
-				<p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula
-					porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-					Fusce dapibus, tellus ac cursus commodo.</p>
+				<p class="lead">这里主要完成对csdn相关信息的展示</p>
 			</div>
 			<div class="col-md-5">
-				<h1>图表</h1>
+				<!-- 所有博客词云 -->
+				<div id="all-blog-wordcloud" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 		<hr class="featurette-divider" />
 		<div class="row featurette">
 			<div class="col-md-7">
-				<h2 class="featurette-heading">
-					First featurette heading. <span class="text-muted">It&#39;ll blow your mind.</span>
-				</h2>
-				<p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula
-					porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-					Fusce dapibus, tellus ac cursus commodo.</p>
+				<div id="year-blog-num" style="width: 600px; height: 400px;"></div>
 			</div>
 			<div class="col-md-5">
-				<h1>图表</h1>
+				<div id="year-blog-main-topic" style="width: 600px; height: 400px;"></div>
+			</div>
+		</div>
+		<hr class="featurette-divider" />
+		<div class="row featurette">
+			<div class="col-md-7">
+				<div id="top-rank-author" style="width: 600px; height: 400px;"></div>
+			</div>
+			<div class="col-md-5">
+				<div id="author-blog-wordcloud" style="width: 600px; height: 400px;"></div>
 			</div>
 		</div>
 	</div>
@@ -75,5 +78,9 @@
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="${pageContext.request.contextPath}/js/jquery.min.js"></script>
 	<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+	<script src="${pageContext.request.contextPath}/js/echarts.js"></script>
+	<script src="${pageContext.request.contextPath}/js/echarts-wordcloud.js"></script>
+	<!-- 自定义js -->
+	<script src="${pageContext.request.contextPath}/js/csdn.js"></script>
 </body>
 </html>

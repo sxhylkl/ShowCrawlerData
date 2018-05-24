@@ -15,6 +15,17 @@ var doughnutChartOption = {
 		x : 'right',
 		data : []
 	},
+	toolbox : {
+		feature : {
+			dataView : {
+				show : true,
+				readOnly : false
+			},
+			saveAsImage : {
+				show : true
+			}
+		}
+	},
 	series : [ {
 		name : '主题',
 		type : 'pie',
@@ -332,7 +343,7 @@ $.ajax({
 		blogYearNumChart.hideLoading();
 		blogYearNumChart.setOption({
 			title : {
-				text : "博客年度发表量"
+				text : "博客年度量"
 			},
 			xAxis : [ {
 				data : data.year
