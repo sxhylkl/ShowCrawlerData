@@ -33,7 +33,9 @@ public class CnblogServiceImp implements CnblogService {
 
 	@Autowired
 	CnblogMapper cnblogAuthorMapper;
-
+	@Autowired
+	CommonService commonService;
+	
 	/**
 	 * 通过提供作者列表返回封装好的封装json对象
 	 * 
@@ -145,25 +147,6 @@ public class CnblogServiceImp implements CnblogService {
 		return wordCountMap;
 	}
 
-	/**
-	 * 通过词云Map结构（词-频率）封装成JSONObject返回
-	 * 
-	 * @return
-	 */
-	private JSONObject getKeywordByWordCountMap(Map<String, Integer> wordCountMap) {
-		// 遍历map进行添加
-		List<NameValuePojo> nameValueList = new ArrayList<NameValuePojo>();
-		Iterator iterator = wordCountMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<String, Integer> entry = (Entry<String, Integer>) iterator.next();
-			nameValueList.add(new NameValuePojo(entry.getValue(), entry.getKey()));
-		}
-		JSONArray keyWordArr = JSONArray.parseArray(JSON.toJSONString(nameValueList));
-		JSONObject res = new JSONObject();
-		res.put("series", keyWordArr);
-		return res;
-	}
-
 	@Override
 	public JSONObject getTopFansAuthorJson(int limit) {
 		// mapper查询数据
@@ -187,7 +170,7 @@ public class CnblogServiceImp implements CnblogService {
 		List<CnblogBlog> blogList = cnblogAuthorMapper.listAllBlogByAuthorId(id);
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogList(blogList);
-		return getKeywordByWordCountMap(wordCountMap);
+		return commonService.getKeywordByWordCountMap(wordCountMap);
 	}
 
 	/**
@@ -199,7 +182,7 @@ public class CnblogServiceImp implements CnblogService {
 		List<CnblogBlog> allBlogList = cnblogAuthorMapper.listAllBlog();
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogListWithReadNum(allBlogList);
-		return getKeywordByWordCountMap(wordCountMap);
+		return commonService.getKeywordByWordCountMap(wordCountMap);
 	}
 
 	/**
@@ -238,21 +221,6 @@ public class CnblogServiceImp implements CnblogService {
 		jo.put("blogReadNum", blogReadNumArr);
 		return jo;
 	}
-
-	/**
-	 * map根据value排序
-	 * @return
-	 */
-	private List<Map.Entry<String, Integer>> getListOrderByMapValue(Map<String,Integer> map){
-		List<Map.Entry<String, Integer>> res = 
-				new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
-		Collections.sort(res, new Comparator<Map.Entry<String, Integer>>() {   
-		    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {      
-		        return (o2.getValue() - o1.getValue()); 
-		    }
-		}); 
-		return res;
-	}
 	
 	@Override
 	public JSONObject getBlogMainTopicByYearAndNum(int year, int topicNum) {
@@ -261,7 +229,7 @@ public class CnblogServiceImp implements CnblogService {
 				.listBlogByYear(String.valueOf(year), String.valueOf(year+1));
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogListWithReadNum(blogList);
-		List<Map.Entry<String, Integer>> res = getListOrderByMapValue(wordCountMap);
+		List<Map.Entry<String, Integer>> res = commonService.getListOrderByMapValue(wordCountMap);
 		//获取排序结果,根据数量进行json生成并返回
 		List<String> legendList=new ArrayList<String>(topicNum);
 		List<NameValuePojo> seriesList=new ArrayList<NameValuePojo>(topicNum);

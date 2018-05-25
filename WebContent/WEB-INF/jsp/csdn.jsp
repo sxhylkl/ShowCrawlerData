@@ -81,6 +81,8 @@
 	<script src="${pageContext.request.contextPath}/js/echarts.js"></script>
 	<script src="${pageContext.request.contextPath}/js/echarts-wordcloud.js"></script>
 	<!-- 自定义js -->
+	<script src="${pageContext.request.contextPath}/js/chart-option.js"></script>
+	<script src="${pageContext.request.contextPath}/js/chart-function.js"></script>
 	<script src="${pageContext.request.contextPath}/js/csdn.js"></script>
 </body>
 </html>

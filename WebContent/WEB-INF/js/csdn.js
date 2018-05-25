@@ -1,210 +1,15 @@
-//全局作者Id
-var authorId;
-// 词云Option
-var wordCloudOption = {
-	title : {
-		text : '',
-		x : 'center'
-	},
-	toolbox : {
-		feature : {
-			dataView : {
-				show : true,
-				readOnly : false
-			},
-			saveAsImage : {
-				show : true
-			}
-		}
-	},
-	tooltip : {
-		show : true
-	},
-	series : [ {
-		name : '关键字',
-		type : 'wordCloud',
-		size : [ '80%', '80%' ],
-		textRotation : [ 0, 45, 90, -45 ],
-		textPadding : 0,
-		autoSize : {
-			enable : true,
-			minSize : 14
-		},
-		// Global text style
-		textStyle : {
-			normal : {
-				fontFamily : 'sans-serif',
-				fontWeight : 'bold',
-				// Color can be a callback function or a color string
-				color : function() {
-					// Random color
-					return 'rgb('
-							+ [ Math.round(Math.random() * 160),
-									Math.round(Math.random() * 160),
-									Math.round(Math.random() * 160) ].join(',')
-							+ ')';
-				}
-			},
-			emphasis : {
-				shadowBlur : 10,
-				shadowColor : '#333'
-			}
-		},
-		data : []
-	} ]
-};
-
-// 饼图
-var pieChartOption = {
-	tooltip : {
-		trigger : 'item',
-		formatter : "{a} <br/>{b} : {c} ({d}%)"
-	},
-	legend : {
-		orient : 'vertical',
-		left : 'left',
-		data : []
-	},
-	series : [ {
-		name : '主题',
-		type : 'pie',
-		radius : '55%',
-		center : [ '50%', '60%' ],
-		data : [],
-		itemStyle : {
-			emphasis : {
-				shadowBlur : 10,
-				shadowOffsetX : 0,
-				shadowColor : 'rgba(0, 0, 0, 0.5)'
-			}
-		}
-	} ]
-};
-// 柱状图基本配置
-var barGraphOption = {
-	title : {
-		text : ''
-	},
-	toolbox : {
-		feature : {
-			dataView : {
-				show : true,
-				readOnly : false
-			},
-			saveAsImage : {
-				show : true
-			}
-		}
-	},
-	tooltip : {},
-	xAxis : {
-		data : [],
-		axisLabel : {
-			interval : 0,
-			rotate : 40
-		},
-		// 开启x轴点击事件
-		triggerEvent : true
-	},
-	yAxis : {},
-	series : []
-};
-// 折线图、柱状图混合
-var mixedChartOption = {
-	tooltip : {
-		trigger : 'axis',
-		axisPointer : {
-			type : 'cross',
-			crossStyle : {
-				color : '#999'
-			}
-		}
-	},
-	toolbox : {
-		feature : {
-			dataView : {
-				show : true,
-				readOnly : false
-			},
-			magicType : {
-				show : true,
-				type : [ 'line', 'bar' ]
-			},
-			restore : {
-				show : true
-			},
-			saveAsImage : {
-				show : true
-			}
-		}
-	},
-	legend : {
-		data : [ '发表量', '阅读量' ]
-	},
-	xAxis : [ {
-		type : 'category',
-		data : [],
-		axisPointer : {
-			type : 'shadow'
-		},
-		axisLabel : {
-			interval : 0,
-			rotate : 40
-		},
-		// 开启x轴点击事件
-		triggerEvent : true
-	} ],
-	yAxis : [ {
-		type : 'value',
-		name : '发表数目'
-	}, {
-		type : 'value',
-		name : '阅读数目',
-		axisLabel : {
-			// 对刻度数量进行格式化
-			formatter : function(value, index) {
-				return value / 1000 + 'k'
-			}
-		}
-	} ],
-	series : [ {
-		name : '发表量',
-		type : 'bar',
-		data : []
-	}, {
-		name : '阅读量',
-		type : 'line',
-		yAxisIndex : 1,
-		data : []
-	} ]
-};
-
-// 所有博客词云
+/**
+ * 表一：所有博客关键字组成词云
+ */ 
 var allBlogWordCloud = echarts.init(document
 		.getElementById('all-blog-wordcloud'));
 allBlogWordCloud.setOption(wordCloudOption);
 allBlogWordCloud.showLoading();
-// 所有博客关键字ajax获取
-$.ajax({
-	type : 'get',
-	asyn : true,
-	url : 'getCSDNAllBlogWordCloud',
-	contentType : 'application/json;charset=utf-8',
-	dataType : 'json',
-	success : function(data) {
-		allBlogWordCloud.hideLoading();
-		allBlogWordCloud.setOption({
-			title : {
-				text : '所有博客关键字'
-			},
-			series : [ {
-				data : data.series
-			} ]
-		});
-	}
-});
+getAllBlogWordCloud('getCSDNAllBlogWordCloud',allBlogWordCloud);
 
-// 所有年份博客数量表，包括
+/**
+ * 表二：博客年度发表量以及阅读量
+ */ 
 var yearBlogNumChart = echarts.init(document.getElementById('year-blog-num'));
 yearBlogNumChart.setOption(mixedChartOption);
 yearBlogNumChart.showLoading();
@@ -216,9 +21,11 @@ yearBlogNumChart.on("click", function(param) {
 	} else if (param.componentType == 'xAxis') {
 		year = param.value;
 	}
-	getBlogYearMainTopicChartData(year, 5, true);
+	//根据选择的年份展示该年份的主题
+	getBlogYearMainTopicChartData(year, 5, true
+			,'getCSDNYearMainTopic',yearBlogMainTopicChart);
 })
-// 年度博客数据的ajax请求
+// 年度博客数据的ajax请求，包括发表量以及阅读量
 $.ajax({
 	type : 'get',
 	asyn : true,
@@ -252,51 +59,28 @@ $.ajax({
 });
 
 /**
- * 通过年份、主题数量、是否异步获取博客年度主题表的数据
- */
-function getBlogYearMainTopicChartData(year, topicNum, isAsyn) {
-	$.ajax({
-		type : 'get',
-		asyn : isAsyn,
-		// get请求的数据,发送id进行请求构造
-		data : {
-			year : year,
-			topicNum : topicNum
-		},
-		url : 'getCSDNYearMainTopic',
-		contentType : 'application/json;charset=utf-8',
-		dataType : 'json', // 很关键，否则返回的data为字符串
-		// 请求的json，设置
-		success : function(data) {
-			yearBlogMainTopicChart.hideLoading();
-			yearBlogMainTopicChart.setOption({
-				title : {
-					text : year + '年博客年度主题',
-					x : 'center'
-				},
-				legend : {
-					orient : 'vertical',
-					x : 'left',
-					data : data.legend
-				},
-				series : [ {
-					data : data.series
-				} ]
-			});
-		}
-	});
-}
+ * 表三：根据年份展示的年度主题词云
+ */ 
 var yearBlogMainTopicChart = echarts.init(document
 		.getElementById('year-blog-main-topic'));
 yearBlogMainTopicChart.setOption(pieChartOption);
 yearBlogMainTopicChart.showLoading();
-getBlogYearMainTopicChartData(2018, 5, true);
-
+//初始化为2018年度主题
+getBlogYearMainTopicChartData(2018, 5, true
+		,'getCSDNYearMainTopic',yearBlogMainTopicChart);
+/**
+ * 表五：根据博主发表博客所组成的词云
+ */
 var authorBlogWordCloud = echarts.init(document
 		.getElementById('author-blog-wordcloud'));
 authorBlogWordCloud.setOption(wordCloudOption);
 authorBlogWordCloud.showLoading();
 
+/**
+ * 表四：根据博主的排名进行排名的博主信息
+ */
+//全局作者Id
+var authorId;
 var topRankAuthorChart = echarts.init(document
 		.getElementById('top-rank-author'));
 topRankAuthorChart.setOption(barGraphOption);
@@ -313,38 +97,9 @@ topRankAuthorChart.on("click", function(param) {
 		authorname = param.value;
 	}
 	// 词云加载
-	getAuthorPublishBlogWordCloudData(authorid, authorname, true);
+	getAuthorPublishBlogWordCloudData(authorid, authorname, true,
+			'getCSDNAuthorPublishBlogWordCloud',authorBlogWordCloud);
 })
-/**
- * 通过博主id以及博主名称设置词云数据
- */
-function getAuthorPublishBlogWordCloudData(authorid, authorname, isAsyn) {
-	$.ajax({
-		type : 'get',
-		asyn : isAsyn,
-		// get请求的数据,发送id进行请求构造
-		data : {
-			id : authorid
-		},
-		url : 'getCSDNAuthorPublishBlogWordCloud',
-		contentType : 'application/json;charset=utf-8',
-		dataType : 'json', // 很关键，否则返回的data为字符串
-		// 请求的json，设置
-		success : function(data) {
-			authorBlogWordCloud.hideLoading();
-			authorBlogWordCloud.setOption({
-				title : {
-					text : '博主发表的博客关键字',
-					// 博主昵称的设置
-					subtext : authorname
-				},
-				series : [ {
-					data : data.series
-				} ]
-			});
-		}
-	});
-}
 // 博主等级ajax请求
 $.ajax({
 	type : 'get',
@@ -420,6 +175,7 @@ $.ajax({
 		});
 		// 根据粉丝量top1的博主进行第一次加载，同时使用同步加载，以免出现id没有加载出来的情况
 		getAuthorPublishBlogWordCloudData(authorId[0],
-				topRankAuthorChart.getOption().xAxis[0].data[0], false);
+				topRankAuthorChart.getOption().xAxis[0].data[0], false,
+				'getCSDNAuthorPublishBlogWordCloud',authorBlogWordCloud);
 	}
 });

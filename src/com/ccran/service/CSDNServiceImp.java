@@ -2,15 +2,11 @@ package com.ccran.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.ansj.domain.Result;
 import org.ansj.domain.Term;
@@ -33,6 +29,8 @@ public class CSDNServiceImp implements CSDNService {
 
 	@Autowired
 	CSDNMapper csdnMapper;
+	@Autowired
+	CommonService commonService;
 
 	/**
 	 * 通过博文列表创建词频Map，词-词频（此处词频只对博客的关键词出现次数进行统计而不涉及博客的阅读量）
@@ -110,40 +108,6 @@ public class CSDNServiceImp implements CSDNService {
 	}
 
 	/**
-	 * 通过词云Map结构（词-频率）封装成JSONObject返回
-	 * 
-	 * @return
-	 */
-	private JSONObject getKeywordByWordCountMap(Map<String, Integer> wordCountMap) {
-		// 遍历map进行添加
-		List<NameValuePojo> nameValueList = new ArrayList<NameValuePojo>();
-		Iterator iterator = wordCountMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<String, Integer> entry = (Entry<String, Integer>) iterator.next();
-			nameValueList.add(new NameValuePojo(entry.getValue(), entry.getKey()));
-		}
-		JSONArray keyWordArr = JSONArray.parseArray(JSON.toJSONString(nameValueList));
-		JSONObject res = new JSONObject();
-		res.put("series", keyWordArr);
-		return res;
-	}
-
-	/**
-	 * map根据value排序
-	 * 
-	 * @return
-	 */
-	private List<Map.Entry<String, Integer>> getListOrderByMapValue(Map<String, Integer> map) {
-		List<Map.Entry<String, Integer>> res = new ArrayList<Map.Entry<String, Integer>>(map.entrySet());
-		Collections.sort(res, new Comparator<Map.Entry<String, Integer>>() {
-			public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-				return (o2.getValue() - o1.getValue());
-			}
-		});
-		return res;
-	}
-
-	/**
 	 * 通过提供作者列表返回封装好的封装json对象
 	 * 
 	 * @param authorList
@@ -189,7 +153,7 @@ public class CSDNServiceImp implements CSDNService {
 		List<CSDNBlog> allBlogList = csdnMapper.listAllBlogs();
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogListWithReadNum(allBlogList);
-		return getKeywordByWordCountMap(wordCountMap);
+		return commonService.getKeywordByWordCountMap(wordCountMap);
 	}
 
 	@Override
@@ -198,7 +162,7 @@ public class CSDNServiceImp implements CSDNService {
 		List<CSDNBlog> blogList = csdnMapper.listYearBlogs(String.valueOf(year), String.valueOf(year + 1));
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogListWithReadNum(blogList);
-		List<Map.Entry<String, Integer>> res = getListOrderByMapValue(wordCountMap);
+		List<Map.Entry<String, Integer>> res = commonService.getListOrderByMapValue(wordCountMap);
 		// 获取排序结果,根据数量进行json生成并返回
 		List<String> legendList = new ArrayList<String>(topicNum);
 		List<NameValuePojo> seriesList = new ArrayList<NameValuePojo>(topicNum);
@@ -259,6 +223,6 @@ public class CSDNServiceImp implements CSDNService {
 		List<CSDNBlog> blogList = csdnMapper.listAuthorBlogById(id);
 		// 生成词频Map
 		Map<String, Integer> wordCountMap = getWordCountMapByBlogList(blogList);
-		return getKeywordByWordCountMap(wordCountMap);
+		return commonService.getKeywordByWordCountMap(wordCountMap);
 	}
 }
